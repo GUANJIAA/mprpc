@@ -27,7 +27,7 @@ cd ./bin
 
 ## mprpc的解析
 
-![](C:\Users\GUANJIAA\Desktop\微信图片_20230411170923.png)
+![](./1.png)
 
 ![](C:\Users\GUANJIAA\Desktop\微信图片_20230411170933.png)
 
