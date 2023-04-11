@@ -21,7 +21,7 @@ void RpcProvider::NotifyService(google::protobuf::Service *service)
     int methodCnt = pserviceDesc->method_count();
 
     // std::cout << "service_name:" << service_name << std::endl;
-    LOG_INFO("service_name:%s", service_name);
+    LOG_INFO("service_name:%s", service_name.c_str());
 
     for (int i = 0; i < methodCnt; i++)
     {
@@ -29,7 +29,7 @@ void RpcProvider::NotifyService(google::protobuf::Service *service)
         const google::protobuf::MethodDescriptor *pmethodDesc = pserviceDesc->method(i);
         std::string method_name = pmethodDesc->name();
         // std::cout << "method_name:" << method_name << std::endl;
-        LOG_INFO("method_name:%s", method_name);
+        LOG_INFO("method_name:%s", method_name.c_str());
         service_info.m_methodMap.insert({method_name, pmethodDesc});
     }
     service_info.m_service = service;
@@ -54,7 +54,7 @@ void RpcProvider::Run()
     server.setThreadNum(2);
 
     // std::cout << "RpcProvider start service at ip:" << ip << " port:" << port << std::endl;
-    LOG_INFO("RpcProvider start service at ip:%s port:%d", ip, port);
+    LOG_INFO("RpcProvider start service at ip:%s port:%d", ip.c_str(), port);
 
     // 把当前rpc节点上要发布的服务全部注册到zk上面，让rpc client可以从zk上发现服务
     // session timeout   30s     zkclient 网络I/O线程  1/3 * timeout 时间发送ping消息
@@ -78,7 +78,7 @@ void RpcProvider::Run()
     }
 
     // rpc服务端准备启动，打印信息
-    std::cout << "RpcProvider start service at ip:" << ip << " port:" << port << std::endl;
+    std::cout << "RpcProvider start service at ip:" << ip.c_str() << " port:" << port << std::endl;
 
     server.start();
     m_eventLoop.loop();
@@ -128,7 +128,7 @@ void RpcProvider::onMessage(const muduo::net::TcpConnectionPtr &conn,
     {
         // 数据头反序列化失败
         // std::cout << "rpc_header_str:" << rpc_header_str << " parse error!" << std::endl;
-        LOG_ERR("rpc_header_str:%s parse error!", rpc_header_str);
+        LOG_ERR("rpc_header_str:%s parse error!", rpc_header_str.c_str());
         return;
     }
 
@@ -141,7 +141,7 @@ void RpcProvider::onMessage(const muduo::net::TcpConnectionPtr &conn,
     std::cout << "rpc_header_str:" << rpc_header_str << std::endl;
     std::cout << "service_name:" << service_name << std::endl;
     std::cout << "method_name:" << method_name << std::endl;
-    std::cout << "args_str:" << args_str << std::endl;
+    std::cout << "args_str:" << args_str.c_str() << std::endl;
     std::cout << "===============================================" << std::endl;
 
     // 获取service对象和method对象
@@ -149,7 +149,7 @@ void RpcProvider::onMessage(const muduo::net::TcpConnectionPtr &conn,
     if (it == m_serviceMap.end())
     {
         // std::cout << service_name << " is not exist!" << std::endl;
-        LOG_ERR("%s is not exist!", service_name);
+        LOG_ERR("%s is not exist!", service_name.c_str());
         return;
     }
 
@@ -157,7 +157,7 @@ void RpcProvider::onMessage(const muduo::net::TcpConnectionPtr &conn,
     if (mit == it->second.m_methodMap.end())
     {
         // std::cout << service_name << ":" << method_name << " is not exist!" << std::endl;
-        LOG_INFO("%s:%s is not exist!", service_name, method_name);
+        LOG_INFO("%s:%s is not exist!", service_name.c_str(), method_name.c_str());
     }
 
     google::protobuf::Service *service = it->second.m_service;      // 获取service对象 new UserService
@@ -168,7 +168,7 @@ void RpcProvider::onMessage(const muduo::net::TcpConnectionPtr &conn,
     if (!request->ParseFromString(args_str))
     {
         // std::cout << "request parse error,content:" << args_str << std::endl;
-        LOG_INFO("request parse error,content:%s", args_str);
+        LOG_INFO("request parse error,content:%s", args_str.c_str());
     }
     google::protobuf::Message *response = service->GetResponsePrototype(method).New();
 
